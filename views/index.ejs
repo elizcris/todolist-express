@@ -24,9 +24,9 @@
     <% for(let i=0; i < items.length; i++) {%> <%# ejs for loop %>
         <li class="item"> <%# list item with class 'item' %>
             <% if(items[i].completed === true) {%> <%# ejs for if an item in an array with 'completed' property is true %>
-                <span class='completed'><%= items[i].thing %></span> <%# create a span with class 'completed' to display the name of the task %>
+                <span class='completed'><%= items[i].thing %></span> <%# create a span with class 'completed' to display the name of the task with css styling for ''.completed' %>
             <% }else{ %> <%# ejs for else clause of if/else statement %>
-                <span><%= items[i].thing %></span> <%# display the name of the task, task will have a 'completed' property of false %>
+                <span><%= items[i].thing %></span> <%# display the name of the task, task will have a 'completed' property of false and no '.completed' class, therefore no css styling %>
             <% } %> <%# closing the else statement %>
             <span class='fa fa-trash'></span> <%# fontawesome trashcan icon %>
         </li> <%# closing tag for the list item %>
