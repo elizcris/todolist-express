@@ -9,12 +9,12 @@ Array.from(deleteBtn).forEach((element)=>{
 
 //Creating an array of the elements assigned to the variable 'item' and implementing a loop to run for each element of the array.
 Array.from(item).forEach((element)=>{
-    element.addEventListener('click', markComplete) //add an event listener to the current item that waits for a click and calls a function called 'markComplete'
+    element.addEventListener('click', markComplete) //add an event listener to each uncomplete item that waits for a click and calls a function called 'markComplete'
 }) //close the loop
 
 //Creating an array of the elements assigned to the variable 'itemCompleted' and implementing a loop to run for each element of the array.
 Array.from(itemCompleted).forEach((element)=>{
-    element.addEventListener('click', markUnComplete) //add an event listener to the current item that waits for a click and calls a function called 'markUnComplete'
+    element.addEventListener('click', markUnComplete) //add an event listener to each complete item that waits for a click and calls a function called 'markUnComplete'
 }) //close the loop
 
 async function deleteItem(){ //declare an asynchronous function
