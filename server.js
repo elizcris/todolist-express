@@ -16,8 +16,9 @@ MongoClient.connect(dbConnectionStr, { useUnifiedTopology: true }) //Creating a 
     }) //closing our .then
 
 //middleware: helps us facilitate communication for our request
-app.set('view engine', 'ejs') //sets ejs as the default render method
+app.set('view engine', 'ejs') //sets ejs as the default render method, our templating language
 app.use(express.static('public')) //sets the location for static assets
+//these two .use below help us do what body parser used to do. Look at the requests coming through and pull the data out of the requests.
 app.use(express.urlencoded({ extended: true })) //tells express to decode and encode URLs where the header matches the content. The extended part supports arrays and objects
 app.use(express.json()) //parses JSON content
 
@@ -28,17 +29,21 @@ app.get('/',async (request, response)=>{ //GET method (read), root route, asynch
     response.render('index.ejs', { items: todoItems, left: itemsLeft }) //rendering 'index.ejs and inside of that render method passing in an object that contains our to do items and the items left. 
 //this is the classic promise version of the async function above
     // db.collection('todos').find().toArray()
+        //db is holding the connection to our database, go to database and find collection of 'todos', find all documents (objects), put into array
+        //pass that value (the array holding the 'todos') into the parameter of data
     // .then(data => {
-    //     db.collection('todos').countDocuments({completed: false})
-    //     .then(itemsLeft => {
-    //         response.render('index.ejs', { items: data, left: itemsLeft })
-    //     })
+        // db.collection('todos').countDocuments({completed: false})
+        // .then(itemsLeft => {
+            // response.render('index.ejs', { items: data, left: itemsLeft })
+            //pass all of the objects (data) retrieved from the database into the ejs template.
+            //the array of objects (data) passing into the ejs template has been given the name items
+        // })
     // })
-    .catch(error => console.error(error)) //catching errors
+    // .catch(error => console.error(error)) //catching errors
 }) // ending the GET async function
 
 app.post('/addTodo', (request, response) => { //POST method (create) triggers when '/addToDo' route is passed in, function with request, response parameters
-    db.collection('todos').insertOne({thing: request.body.todoItem, completed: false}) //inserts a new item into the todos collection. A request coming from client side, getting todoItem from within that body and assigning to the 'thing' key in the document with the 'completed' key of false.
+    db.collection('todos').insertOne({thing: request.body.todoItem, completed: false}) //inserts a new item (document/object) into the todos collection. A request coming from client side, getting todoItem from within that body and assigning to the 'thing' property in the document with the 'completed' property of false.
     .then(result => { //classic promis syntax. if insert is successful, do something 
         console.log('Todo Added') //console log action
         response.redirect('/') //redirect back to the root
@@ -49,11 +54,11 @@ app.post('/addTodo', (request, response) => { //POST method (create) triggers wh
 app.put('/markComplete', (request, response) => { //PUT method (update) triggers '/markComplete' route, function with request, response parameters
     db.collection('todos').updateOne({thing: request.body.itemFromJS},{ //look in the db for one item matching the name of the item passed in from the main.js file that was clicked on. Note: if there were multiple tasks with the same name, it will just update the first one. Generally preference would be selecting by ID
         $set: {
-            completed: true //set the completed status to 'true'
+            completed: true //set the completed property to 'true'
           }
     },{
-        sort: {_id: -1}, //moves item to the bottm of the list
-        upsert: false //insert/update. prevents insertion if item does not already exist
+        sort: {_id: -1}, //sorts top to bottom, currently will just grab first 'thing' (if there were duplicates)
+        upsert: false //insert/update. 'false' prevents insertion if item does not already exist. if set to true and tried to update something that wasn't there, it would create the document
     })
     .then(result => { //starts a then if update was successful
         console.log('Marked Complete') //logging successful completion
@@ -66,11 +71,11 @@ app.put('/markComplete', (request, response) => { //PUT method (update) triggers
 app.put('/markUnComplete', (request, response) => { //PUT method (update), triggers '/markUnComplete' route, function with request, response parameters
     db.collection('todos').updateOne({thing: request.body.itemFromJS},{ //look in the db for one item matching the name of the item passed in from the main.js file that was clicked on. Note: if there were multiple tasks with the same name, it will just update the first one. Generally preference would be selecting by ID
         $set: {
-            completed: false //set the completed status to 'false'
+            completed: false //set the completed property to 'false'
           }
     },{
-        sort: {_id: -1}, //moves item to the bottm of the list
-        upsert: false //insert/update. prevents insertion if item does not already exist
+        sort: {_id: -1}, // //sorts top to bottom, currently will just grab first 'thing' (if there were duplicates)
+        upsert: false //insert/update. 'false' prevents insertion if item does not already exist. if set to true and tried to update something that wasn't there, it would create the document
     })
     .then(result => { //starts a then if update was successful
         console.log('Marked Complete') //logging successful completion
